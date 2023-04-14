@@ -28,9 +28,17 @@ InterpretResult interpret(const char* source) {
 
     Chunk chunk;
     initChunk(&chunk);
+    if(!compile(source,&chunk)){
+        freeChunk(&chunk);
+        return INTERPRET_COMPILE_ERROR;
+    }
+    vm.chunk = &chunk;
+    vm.ip = vm.chunk -> code;
+    initChunk(&chunk);
     compile(source, &chunk);
-
-  return INTERPRET_OK;
+    InterpretResult result  = run();
+    free(&chunk);
+    return result;
   };
 
 void push(Value value) {
