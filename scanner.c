@@ -4,7 +4,7 @@
 #include "common.h"
 #include "scanner.h"
 
-// ==============================
+// ============================== first define function
 void initScanner(const char* source);
 static bool isAtEnd();
 static Token makeToken(TokenType type);
