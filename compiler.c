@@ -6,12 +6,16 @@
 
 // ===============================first define function
 bool compile(const char* source, Chunk* chunk);
+static void errorAtCurrent(const char* message);
+static void error(const char* message);
+static void errorAt(Token* token,const char* message);
 // ===============================
 
 // parser 解析
 typedef struct {
   Token current;
   Token previous;
+  bool hadError;
 } Parser;
 
 Parser parser;
@@ -21,8 +25,8 @@ bool compile(const char* source, Chunk* chunk) {
     advance();
     expressiom();
     consume(TOKEN_EOF, "“Expect end of expression.");
-  // TODO
-    return true;
+    // 返回compile是否有bug
+    return !parser.hadError;
 };
 
 static void advance(){
@@ -35,3 +39,28 @@ static void advance(){
   }
   
 };
+
+
+static void errorAtCurrent(const char* message) {
+  errorAt(&parser.current, message);
+};
+
+static void error(const char* message){
+  errorAt(&parser.previous,message);
+};
+
+static void errorAt(Token* token,const char* message){
+  // stderr
+  fprintf(stderr, "[line %d] Error", token->line);
+  if (token->type == TOKEN_EOF) {
+    fprintf(stderr, " at end");
+  } else if (token->type == TOKEN_ERROR) {
+    // Nothing.
+  } else {
+    fprintf(stderr, " at '%.*s'", token->length, token->start);
+  }
+
+  printf(stderr, ": %s\n", message);
+  // 报告是否有bug
+  parser.hadError = true;
+}
