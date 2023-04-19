@@ -15,7 +15,7 @@ static void emitByte(uint8_t byte);
 static void advance();
 static Chunk* currentChunk();
 static void endCompiler();
-static emitReturn();
+static void emitReturn();
 static void emitBytes(uint8_t byte1, uint8_t byte2);
 static void expression();
 static void number();
@@ -63,7 +63,7 @@ static void emitConstant(Value value){
 
 // 判断Value范围，是否符合规范
 static uint8_t makeConstant(Value Value){
-
+  return 0;
 };
 
 
@@ -90,7 +90,7 @@ static void endCompiler() {
   emitReturn();
 };
 
-static emitReturn(){
+static void emitReturn(){
   emitByte(OP_RETURN);
 };
 
