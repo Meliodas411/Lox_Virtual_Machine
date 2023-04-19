@@ -13,11 +13,14 @@ static void errorAt(Token* token,const char* message);
 static void consume(TokenType type,const char* message);
 static void emitByte(uint8_t byte);
 static void advance();
-static void expression();
 static Chunk* currentChunk();
 static void endCompiler();
 static emitReturn();
 static void emitBytes(uint8_t byte1, uint8_t byte2);
+static void expression();
+static void number();
+static void emitConstant(Value value);
+static uint8_t makeConstant(Value Value);
 // =============================== end define function
 
 // parser 解析
@@ -49,6 +52,22 @@ static void expression(){
 
 };
 
+static void number(){
+  double value = strtod(parser.previous.start,NULL);
+  emitConstant(value);
+};
+
+static void emitConstant(Value value){
+  emitBytes(OP_CONSTANT,makeConstant(value));
+};
+
+// 判断Value范围，是否符合规范
+static uint8_t makeConstant(Value Value){
+
+};
+
+
+
 // add the consume
 static void consume(TokenType type,const char* message){
   if(parser.current.type == type){
@@ -75,6 +94,7 @@ static emitReturn(){
   emitByte(OP_RETURN);
 };
 
+// 连续写入, 比如字节码里是 const_枚举 数字，连续写入两次
 static void emitBytes(uint8_t byte1, uint8_t byte2) {
   emitByte(byte1);
   emitByte(byte2);
