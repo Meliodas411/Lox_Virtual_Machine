@@ -11,6 +11,9 @@ static void errorAtCurrent(const char* message);
 static void error(const char* message);
 static void errorAt(Token* token,const char* message);
 static void consume(TokenType type,const char* message);
+static void emitByte(uint8_t byte);
+static void advance();
+static void expression();
 // ===============================
 
 // parser 解析
@@ -29,12 +32,15 @@ bool compile(const char* source, Chunk* chunk) {
     parser.hadError = false;
     parser.panicMode = false;
     advance();
-    expressiom();
+    expression();
     consume(TOKEN_EOF, "“Expect end of expression.");
     // 返回compile是否有bug
     return !parser.hadError;
 };
 
+static void expression(){
+
+};
 
 // add the consume
 static void consume(TokenType type,const char* message){
@@ -44,6 +50,11 @@ static void consume(TokenType type,const char* message){
   };
 
   errorAtCurrent(message);
+}
+
+
+static void emitByte(uint8_t byte){
+
 }
 
 static void advance(){
@@ -68,7 +79,7 @@ static void error(const char* message){
 
 static void errorAt(Token* token,const char* message){
   // recovery to right code if ;
-  if (parser.panicMode = true) return;
+  if (parser.panicMode == true) return;
   parser.panicMode = true;
   // stderr
   fprintf(stderr, "[line %d] Error", token->line);
@@ -80,7 +91,7 @@ static void errorAt(Token* token,const char* message){
     fprintf(stderr, " at '%.*s'", token->length, token->start);
   }
 
-  printf(stderr, ": %s\n", message);
+  fprintf(stderr, ": %s\n", message);
   // 报告是否有bug
   parser.hadError = true;
 }
