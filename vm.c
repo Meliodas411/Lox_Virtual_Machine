@@ -37,7 +37,7 @@ InterpretResult interpret(const char* source) {
     initChunk(&chunk);
     compile(source, &chunk);
     InterpretResult result  = run();
-    free(&chunk);
+    freeChunk(&chunk);
     return result;
   };
 
