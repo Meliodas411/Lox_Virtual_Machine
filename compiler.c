@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "common.h"
 #include "compiler.h"
@@ -9,6 +10,7 @@ bool compile(const char* source, Chunk* chunk);
 static void errorAtCurrent(const char* message);
 static void error(const char* message);
 static void errorAt(Token* token,const char* message);
+static void consume(TokenType type,const char* message);
 // ===============================
 
 // parser 解析
@@ -16,18 +18,33 @@ typedef struct {
   Token current;
   Token previous;
   bool hadError;
+  bool panicMode;
 } Parser;
 
 Parser parser;
 
 bool compile(const char* source, Chunk* chunk) {
     initScanner(source);
+    // init the hadError and panicMode
+    parser.hadError = false;
+    parser.panicMode = false;
     advance();
     expressiom();
     consume(TOKEN_EOF, "“Expect end of expression.");
     // 返回compile是否有bug
     return !parser.hadError;
 };
+
+
+// add the consume
+static void consume(TokenType type,const char* message){
+  if(parser.current.type == type){
+    advance();
+    return;
+  };
+
+  errorAtCurrent(message);
+}
 
 static void advance(){
   parser.previous = parser.current;
@@ -50,6 +67,9 @@ static void error(const char* message){
 };
 
 static void errorAt(Token* token,const char* message){
+  // recovery to right code if ;
+  if (parser.panicMode = true) return;
+  parser.panicMode = true;
   // stderr
   fprintf(stderr, "[line %d] Error", token->line);
   if (token->type == TOKEN_EOF) {
